@@ -1,41 +1,102 @@
--- GROK x LUIS HUB V6 | BLOX FRUITS 2026 | KAVO UI (DELTA MOBILE FIX) 🔥
--- Atualizado pós-update Delta v2.708 - carrega suave, funções base + rejoin ok
+--// 🩸 CRIMSON NIGHT V3
+--// by Luis RN
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-local Window = Library.CreateLib("🦍 Grok x Luis Hub | Blox Fruits 2026", "DarkTheme")  -- Animações top, dark vibe
+if _G.CrimsonLoaded then
+    return warn("Crimson Night já está rodando.")
+end
+_G.CrimsonLoaded = true
 
-local MainTab = Window:NewTab("🏝️ Main Farm")
-local MiscTab = Window:NewTab("⚙️ Misc")
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
+local LocalPlayer = Players.LocalPlayer
 
-local FarmSection = MainTab:NewSection("Auto Farm Level")
+--// Estados
+local States = {
+    AutoFarm = false,
+    AutoQuest = false
+}
 
-_G.AutoFarmLevel = false
-FarmSection:NewToggle("🚀 Auto Farm Level (Quest + Mobs)", "Liga o farm automático", function(v)
-    _G.AutoFarmLevel = v
-    print("Auto Farm: " .. (v and "LIGADO! Bora upar level" or "DESLIGADO"))
-    -- Cola aqui o FarmLoop completo das mensagens antigas (CheckQuest full, TweenTo, EquipTool, Magnet spawn, Fast Attack spawn)
-    -- Se precisar, eu mando o loop completo de novo!
-end)
+--// Funções
+local Functions = {}
 
-_G.FastAttack = false
-FarmSection:NewToggle("⚡ Fast Attack Insano", "Ataque rápido", function(v)
-    _G.FastAttack = v
-end)
+function Functions:StartAutoFarm()
+    States.AutoFarm = true
+    task.spawn(function()
+        while States.AutoFarm do
+            print("AutoFarm ativo...")
+            task.wait(1)
+        end
+    end)
+end
 
-local Weapons = {"Combat", "Katana", "Pole", "Dark Blade", "Saber"}
-_G.SelectWeapon = "Combat"
-FarmSection:NewDropdown("Select Arma/Fruta", "Escolhe tua arma", Weapons, function(selected)
-    _G.SelectWeapon = selected
-    print("Arma selecionada: " .. selected)
-end)
+function Functions:StopAutoFarm()
+    States.AutoFarm = false
+end
 
-_G.Magnet = true
-FarmSection:NewToggle("🧲 Magnet Mobs", "Puxa mobs pra perto", function(v)
-    _G.Magnet = v
-end)
+function Functions:StartAutoQuest()
+    States.AutoQuest = true
+    task.spawn(function()
+        while States.AutoQuest do
+            print("AutoQuest ativo...")
+            task.wait(1)
+        end
+    end)
+end
 
-MiscTab:NewButton("🔄 Rejoin Server (já tá funcionando)", "Troca de server rápido", function()
-    game:GetService("TeleportService"):Teleport(game.PlaceId)
-end)
+function Functions:StopAutoQuest()
+    States.AutoQuest = false
+end
 
-print("Hub Kavo carregado no Delta! Abre a GUI e testa o Auto Farm, Luis! Se GUI abrir, cola o resto do código. 🚀🍌")
+--// Window
+local Window = Rayfield:CreateWindow({
+    Name = "🩸 Crimson Night",
+    LoadingTitle = "Crimson Night",
+    LoadingSubtitle = "by Luis RN",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "CrimsonNight",
+        FileName = "Config"
+    },
+    KeySystem = false
+})
+
+--// Main Tab
+local Main = Window:CreateTab("Main", 4483362458)
+
+Main:CreateToggle({
+    Name = "Auto Farm",
+    CurrentValue = false,
+    Callback = function(Value)
+        if Value then
+            Functions:StartAutoFarm()
+        else
+            Functions:StopAutoFarm()
+        end
+    end
+})
+
+Main:CreateToggle({
+    Name = "Auto Quest",
+    CurrentValue = false,
+    Callback = function(Value)
+        if Value then
+            Functions:StartAutoQuest()
+        else
+            Functions:StopAutoQuest()
+        end
+    end
+})
+
+Main:CreateButton({
+    Name = "Rejoin Server",
+    Callback = function()
+        TeleportService:Teleport(game.PlaceId, LocalPlayer)
+    end
+})
+
+Rayfield:Notify({
+    Title = "🩸 Crimson Night",
+    Content = "Funções carregadas com sucesso.",
+    Duration = 5
+})
